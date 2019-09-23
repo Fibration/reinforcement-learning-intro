@@ -7,14 +7,15 @@ from matplotlib import pyplot as plt
 # means of normal distributed slots are randomly chosen
 # from a uniform distribution
 class Game:
-    def __init__(self):
-        self.arms = [random.uniform(-5, 5) for i in range(10)]
+    def __init__(self, num_arms: int):
+        self.num_arms = num_arms
+        self.arms = [random.uniform(-5, 5) for i in range(num_arms)]
 
     def play(self, arm: int) -> float:
-        if arm < 9:
-            return random.normalvariate(self.arms[arm], 1)
+        if arm < self.num_arms - 1:
+            return random.normalvariate(self.arms[self.num_arms], 1)
         else:
-            return random.normalvariate(self.arms[9], 1)
+            return random.normalvariate(self.arms[self.num_arms - 1], 1)
         # force action to always be valid
 
 

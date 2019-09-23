@@ -24,7 +24,7 @@ def plot_performance(rewards: List[float], title='Bandit Performance'):
     plt.xlabel('steps')
     plt.ylabel('average reward')
     plt.title(title)
-    plt.show()
+    plt.savefig('./bandit_performance/' + title + '.png')
 
 
 # Greedy bandit
@@ -37,7 +37,18 @@ def greedy(steps: int):
         best = Q.index(max(Q))
         reward = game.play(best)
         Q[best] = (reward + (step - 1) * Q[best]) / step
-        rewards.push(rewards[-1] * (step - 1) / step + reward / step)
+        if step > 1:
+            rewards.append(rewards[-1] * (step - 1) / step + reward / step)
+        else:
+            rewards.append(reward)
 
     # plot what we get
     plot_performance(rewards)
+
+
+def main():
+    greedy(1000)
+
+
+if __name__ == '__main__':
+    main()

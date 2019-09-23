@@ -20,7 +20,8 @@ class Game:
 
 
 # plot performance
-def plot_performance(rewards: List[List[float]], title='Bandit Performance'):
+def plot_performance(rewards: List[List[float]],
+                     title: str = 'Bandit Performance'):
     for reward in rewards:
         plt.plot(range(len(reward)), reward)
     plt.xlabel('steps')
@@ -30,13 +31,17 @@ def plot_performance(rewards: List[List[float]], title='Bandit Performance'):
 
 
 # Greedy bandit
-def greedy(steps: int) -> List[float]:
+def greedy(steps: int, epsilon: float = 0, init_Q: List[float] = [0] * 100) -> List[float]:
     game = Game(100)
-    Q = [0] * 10  # initialise value function
+    Q = init_Q  # initialise value function
     rewards = []  # keep track of performance
 
     for step in range(1, steps + 1):
-        best = Q.index(max(Q))
+        best = 0
+        if random.random() < epsilon:
+            best = random.randrange(0, len(Q))
+        else:
+            best = Q.index(max(Q))
         reward = game.play(best)
         Q[best] = (reward + (step - 1) * Q[best]) / step
         if step > 1:

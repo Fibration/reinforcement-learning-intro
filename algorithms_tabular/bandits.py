@@ -51,6 +51,7 @@ def main():
     rewards = []
     steps = 1000
     rewards.append(greedy(steps))
+    plot_performance(rewards)
 
 
 if __name__ == '__main__':

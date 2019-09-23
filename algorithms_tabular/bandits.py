@@ -1,4 +1,6 @@
 import random
+from typing import List
+from matplotlib import pyplot as plt
 
 
 # slot machine game for bandits
@@ -13,3 +15,10 @@ class Game:
             return random.normalvariate(self.arms[arm], 1)
 
 
+# plot performance
+def plot_performance(rewards: List[float], title='Bandit Performance'):
+    plt.plot(range(len(rewards)), rewards)
+    plt.xlabel('steps')
+    plt.ylabel('average reward')
+    plt.title(title)
+    plt.show()

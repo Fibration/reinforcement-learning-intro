@@ -2,6 +2,8 @@ import random
 
 
 # slot machine game for bandits
+# means of normal distributed slots are randomly chosen
+# from a uniform distribution
 class Game:
     def __init__(self):
         self.arms = [random.uniform(-5, 5) for i in range(10)]

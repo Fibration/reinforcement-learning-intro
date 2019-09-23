@@ -13,7 +13,7 @@ class Game:
 
     def play(self, arm: int) -> float:
         if arm < self.num_arms - 1:
-            return random.normalvariate(self.arms[self.num_arms], 1)
+            return random.normalvariate(self.arms[arm], 1)
         else:
             return random.normalvariate(self.arms[self.num_arms - 1], 1)
         # force action to always be valid

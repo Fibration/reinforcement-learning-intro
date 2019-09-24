@@ -21,18 +21,23 @@ class Game:
 
 # plot performance
 def plot_performance(rewards: List[List[float]],
+                     labels: List[str] = [],
                      title: str = 'Bandit Performance'):
-    for reward in rewards:
-        plt.plot(range(len(reward)), reward)
+    for index, reward in enumerate(rewards):
+        if len(labels) == 0:
+            plt.plot(reward, label=index)
+        else:
+            plt.plot(reward, label=labels[index])
     plt.xlabel('steps')
     plt.ylabel('average reward')
     plt.title(title)
+    plt.legend()
     plt.savefig('./bandit_performance/' + title + '.png')
 
 
 # Greedy bandit
-def greedy(steps: int, epsilon: float = 0, init_Q: List[float] = [0] * 100) -> List[float]:
-    game = Game(100)
+def greedy(steps: int, epsilon: float = 0, init_Q: List[float] = [0] * 50) -> List[float]:
+    game = Game(50)
     Q = init_Q  # initialise value function
     rewards = []  # keep track of performance
 
@@ -56,7 +61,17 @@ def main():
     rewards = []
     steps = 1000
     rewards.append(greedy(steps))
-    plot_performance(rewards)
+    rewards.append(greedy(steps, 0.01))
+    rewards.append(greedy(steps, 0.005))
+    rewards.append(greedy(steps, init_Q=[5] * 50))
+
+    labels = [
+        'Greedy',
+        '0.01-Greedy',
+        '0.005-Greedy',
+        'Optimistic expectations 5'
+    ]
+    plot_performance(rewards, labels)
 
 
 if __name__ == '__main__':

@@ -83,9 +83,37 @@ def ucb_bandit(steps: int, exploration: float) -> List[float]:
     return rewards
 
 
+def gradient_bandit(steps: int, learning_rate: float) -> List[float]:
+    arms = 100
+    game = Game(arms)
+    H = [0] * arms
+    pi = [1] * arms
+    rewards = [0]
+
+    for step in range(1, steps + 1):
+        best = random.choices(range(arms), weights=pi)[0]
+        reward = game.play(best)
+        H = [H[a] + learning_rate * (reward - rewards[-1]) * (1 - pi[a])
+             if a == best
+             else H[a] - learning_rate * (reward - rewards[-1]) * pi[a]
+             for a in range(arms)
+             ]
+        expH = [math.exp(Ha) for Ha in H]
+        partition_function = sum(expH)
+        pi = [expHa / partition_function for expHa in expH]
+
+        # update average reward
+        if step > 1:
+            rewards.append(rewards[-1] * (step - 1) / step + reward / step)
+        else:
+            rewards = [reward]
+
+    return rewards
+
+
 def main():
     rewards = []
-    steps = 1000
+    steps = 2000
     rewards.append(greedy_bandit(steps))
     rewards.append(greedy_bandit(steps, 0.01))
     rewards.append(greedy_bandit(steps, 0.005))
@@ -93,6 +121,8 @@ def main():
     rewards.append(greedy_bandit(steps, init_Q=[4] * 50))
     rewards.append(ucb_bandit(steps, 0.1))
     rewards.append(ucb_bandit(steps, 1))
+    rewards.append(gradient_bandit(steps, 0.1))
+    rewards.append(gradient_bandit(steps, 0.3))
 
     labels = [
         'Greedy',
@@ -101,7 +131,9 @@ def main():
         'Optimistic expectations 5',
         'Optimistic expectations 4',
         'UCB exploration 0.1',
-        'UCB exploration 1'
+        'UCB exploration 1',
+        'Gradient bandit learning rate 0.1',
+        'Gradient bandit learning rate 0.3'
     ]
     plot_performance(rewards, labels)
 

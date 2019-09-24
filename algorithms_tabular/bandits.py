@@ -64,12 +64,14 @@ def main():
     rewards.append(greedy(steps, 0.01))
     rewards.append(greedy(steps, 0.005))
     rewards.append(greedy(steps, init_Q=[5] * 50))
+    rewards.append(greedy(steps, init_Q=[6] * 50))
 
     labels = [
         'Greedy',
         '0.01-Greedy',
         '0.005-Greedy',
-        'Optimistic expectations 5'
+        'Optimistic expectations 5',
+        'Optimistic expectations 6'
     ]
     plot_performance(rewards, labels)
 

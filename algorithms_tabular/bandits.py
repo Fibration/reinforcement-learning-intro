@@ -37,8 +37,8 @@ def plot_performance(rewards: List[List[float]],
 
 
 # Greedy bandit
-def greedy_bandit(steps: int, epsilon: float = 0, init_Q: List[float] = [0] * 50) -> List[float]:
-    game = Game(50)
+def greedy_bandit(steps: int, epsilon: float = 0, init_Q: List[float] = [0] * 100) -> List[float]:
+    game = Game(100)
     Q = init_Q  # initialise value function
     rewards = []  # keep track of performance
 

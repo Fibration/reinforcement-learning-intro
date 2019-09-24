@@ -1,6 +1,7 @@
 import random
 from typing import List
 from matplotlib import pyplot as plt
+import math
 
 
 # slot machine game for bandits
@@ -36,7 +37,7 @@ def plot_performance(rewards: List[List[float]],
 
 
 # Greedy bandit
-def greedy(steps: int, epsilon: float = 0, init_Q: List[float] = [0] * 50) -> List[float]:
+def greedy_bandit(steps: int, epsilon: float = 0, init_Q: List[float] = [0] * 50) -> List[float]:
     game = Game(50)
     Q = init_Q  # initialise value function
     rewards = []  # keep track of performance
@@ -57,21 +58,50 @@ def greedy(steps: int, epsilon: float = 0, init_Q: List[float] = [0] * 50) -> Li
     return rewards
 
 
+def ucb_bandit(steps: int, exploration: float) -> List[float]:
+    game = Game(100)
+    Q = [0] * 100
+    # each action has been taken 0 times but 0.1 to avoid division by zero
+    N = [0.1] * 100
+    rewards = []
+
+    if exploration <= 0:
+        raise ValueError('Not a valid UCB exploration parameter value.')
+
+    for step in range(1, steps + 1):
+        ucb = [Q[a] + exploration * math.sqrt(math.log(step) / N[a])
+               for a in range(len(Q))]
+        best = ucb.index(max(ucb))
+        N[best] += 1  # update the count of the action taken
+        reward = game.play(best)
+        Q[best] = (reward + (step - 1) * Q[best]) / step
+        if step > 1:
+            rewards.append(rewards[-1] * (step - 1) / step + reward / step)
+        else:
+            rewards.append(reward)
+
+    return rewards
+
+
 def main():
     rewards = []
     steps = 1000
-    rewards.append(greedy(steps))
-    rewards.append(greedy(steps, 0.01))
-    rewards.append(greedy(steps, 0.005))
-    rewards.append(greedy(steps, init_Q=[5] * 50))
-    rewards.append(greedy(steps, init_Q=[6] * 50))
+    rewards.append(greedy_bandit(steps))
+    rewards.append(greedy_bandit(steps, 0.01))
+    rewards.append(greedy_bandit(steps, 0.005))
+    rewards.append(greedy_bandit(steps, init_Q=[5] * 50))
+    rewards.append(greedy_bandit(steps, init_Q=[4] * 50))
+    rewards.append(ucb_bandit(steps, 0.1))
+    rewards.append(ucb_bandit(steps, 1))
 
     labels = [
         'Greedy',
         '0.01-Greedy',
         '0.005-Greedy',
         'Optimistic expectations 5',
-        'Optimistic expectations 6'
+        'Optimistic expectations 4',
+        'UCB exploration 0.1',
+        'UCB exploration 1'
     ]
     plot_performance(rewards, labels)
 
